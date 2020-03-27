@@ -11,6 +11,7 @@ import (
 	"os"
 	"os/signal"
 	"strconv"
+	"strings"
 	"syscall"
 	"time"
 )
@@ -59,23 +60,28 @@ func updatePrices(logger *simple.Logger) error {
 	}
 	httpClient := &http.Client{Transport: tr}
 
-	// send the payload from the scanner routine
-	req, _ := http.NewRequest("POST", os.Getenv("URL"), bytes.NewBuffer([]byte(os.Getenv("PAYLOAD"))))
-	req.Header.Set("X-Api-Key", os.Getenv("APIKEY"))
-	req.Header.Set("Content-Type", "application/json")
-	resp, err := httpClient.Do(req)
-	if err != nil {
-		logger.Error(fmt.Sprintf("Http request %v", err))
-		return err
-	}
+	list := strings.Split(os.Getenv("PAYLOAD"), ",")
 
-	defer resp.Body.Close()
-	body, e := ioutil.ReadAll(resp.Body)
-	if e != nil {
-		logger.Error(fmt.Sprintf("Cron service updatePrices %v", e))
-		return e
+	for x, _ := range list {
+		// send the payload
+		req, _ := http.NewRequest("POST", os.Getenv("URL"), bytes.NewBuffer([]byte(list[x])))
+		req.Header.Set("X-Api-Key", os.Getenv("APIKEY"))
+		req.Header.Set("Content-Type", "application/json")
+		resp, err := httpClient.Do(req)
+		if err != nil {
+			logger.Error(fmt.Sprintf("Http request %v", err))
+			continue
+		}
+
+		defer resp.Body.Close()
+		body, e := ioutil.ReadAll(resp.Body)
+		if e != nil {
+			logger.Error(fmt.Sprintf("Cron service updatePrices %v", e))
+			continue
+		}
+		logger.Debug(fmt.Sprintf("Response from server %s", string(body)))
+		time.Sleep(2 * time.Second)
 	}
-	logger.Debug(fmt.Sprintf("Response from server %s", string(body)))
 
 	return nil
 }
