@@ -64,6 +64,7 @@ func updatePrices(logger *simple.Logger) error {
 
 	for x, _ := range list {
 		// send the payload
+		logger.Info(fmt.Sprintf("Retrieving data for  %s", list[x]))
 		req, _ := http.NewRequest("POST", os.Getenv("URL"), bytes.NewBuffer([]byte(list[x])))
 		req.Header.Set("X-Api-Key", os.Getenv("APIKEY"))
 		req.Header.Set("Content-Type", "application/json")
