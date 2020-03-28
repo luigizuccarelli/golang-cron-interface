@@ -144,6 +144,7 @@
                 "test",
                 "-v",
                 "schema.go",
+                "client-interface.go",
                 "validate.go",
                 "validate_test.go",
                 "update.go",
