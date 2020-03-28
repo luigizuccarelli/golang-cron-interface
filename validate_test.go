@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	logger simple.Logger
+	logger *simple.Logger
 )
 
 func TestEnvars(t *testing.T) {
@@ -40,16 +40,18 @@ func TestEnvars(t *testing.T) {
 		},
 	}
 	var err error
-	logger.Level = "trace"
+	logger = &simple.Logger{Level: "trace"}
+
 	for _, tt := range tests {
 		fmt.Println(fmt.Sprintf("\nExecuting test : %s", tt.Name))
 		switch tt.Handler {
 		case "TestEnvarsFail":
 			err = nil
 			os.Setenv("SERVER_PORT", "")
-			err = ValidateEnvars()
+			err = ValidateEnvars(logger)
 		case "TestEnvarsPass":
 			err = nil
+			os.Setenv("LOG_LEVEL", "info")
 			os.Setenv("SERVER_PORT", "9000")
 			os.Setenv("REDIS_HOST", "127.0.0.1")
 			os.Setenv("REDIS_PORT", "6379")
@@ -70,7 +72,9 @@ func TestEnvars(t *testing.T) {
 			os.Setenv("PROVIDER_TOKEN", "dsfgsdfsdf")
 			os.Setenv("ANALYTICS_URL", "http://test.com")
 			os.Setenv("PAYLOAD", "{ test }")
-			err = ValidateEnvars()
+			os.Setenv("SLEEP", "5")
+			os.Setenv("CRON", "0/5 * * *")
+			err = ValidateEnvars(logger)
 		}
 
 		if !tt.Want {

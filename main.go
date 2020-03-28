@@ -1,17 +1,12 @@
 package main
 
 import (
-	"bytes"
-	"crypto/tls"
 	"fmt"
 	"github.com/microlib/simple"
 	"gopkg.in/robfig/cron.v2"
-	"io/ioutil"
-	"net/http"
 	"os"
 	"os/signal"
 	"strconv"
-	"strings"
 	"syscall"
 	"time"
 )
@@ -29,10 +24,12 @@ func main() {
 		os.Exit(1)
 	}
 
+	conn := NewClientConnection(logger)
+
 	cr := cron.New()
 	cr.AddFunc(os.Getenv("CRON"),
 		func() {
-			updatePrices(logger)
+			UpdateData(conn)
 		})
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
@@ -51,40 +48,6 @@ func main() {
 		s, _ := strconv.Atoi(os.Getenv("SLEEP"))
 		time.Sleep(time.Duration(s) * time.Second)
 	}
-}
-
-func updatePrices(logger *simple.Logger) error {
-	// set up http object
-	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-	}
-	httpClient := &http.Client{Transport: tr}
-
-	list := strings.Split(os.Getenv("PAYLOAD"), ",")
-
-	for x, _ := range list {
-		// send the payload
-		logger.Info(fmt.Sprintf("Retrieving data for  %s", list[x]))
-		req, _ := http.NewRequest("POST", os.Getenv("URL"), bytes.NewBuffer([]byte(list[x])))
-		req.Header.Set("X-Api-Key", os.Getenv("APIKEY"))
-		req.Header.Set("Content-Type", "application/json")
-		resp, err := httpClient.Do(req)
-		if err != nil {
-			logger.Error(fmt.Sprintf("Http request %v", err))
-			continue
-		}
-
-		defer resp.Body.Close()
-		body, e := ioutil.ReadAll(resp.Body)
-		if e != nil {
-			logger.Error(fmt.Sprintf("Cron service updatePrices %v", e))
-			continue
-		}
-		logger.Debug(fmt.Sprintf("Response from server %s", string(body)))
-		time.Sleep(2 * time.Second)
-	}
-
-	return nil
 }
 
 func cleanup(c *cron.Cron) {
