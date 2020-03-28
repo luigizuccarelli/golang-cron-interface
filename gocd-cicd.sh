@@ -3,9 +3,9 @@
 # All parameter fields are required for the script to execute
 
 # declare some variables
-PROJECT="myportfolio-cron"
-jobname="kaniko-myportfolio-cron"
-deploymentconfig="cron.json"
+PROJECT="myportfolio-cronupdate"
+jobname="kaniko-myportfolio-cronupdate"
+deploymentconfig="cronupdate.json"
 namespace="myportfolio"
 
 

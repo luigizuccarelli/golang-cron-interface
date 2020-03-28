@@ -1,6 +1,6 @@
 {
   "name": "dev",
   "pipelines": [
-    "myportfolio-cron"
+    "myportfolio-cronupdate"
   ]
 }
