@@ -13,8 +13,8 @@ spec:
       - name: kaniko
         image: gcr.io/kaniko-project/executor:latest
         args: [
-          "--dockerfile=/godata/pipelines/myportfolio-cronupdate/Dockerfile",
           "--context=/godata/pipelines/myportfolio-cronupdate",
+          "--dockerfile=/godata/pipelines/myportfolio-cronupdate/Dockerfile",
           "--destination=tfld-docker-prd-local.repo.14west.io/myportfolio-cronupdate:1.13.1"
         ]
         volumeMounts:
@@ -30,7 +30,7 @@ spec:
       volumes:
       - name: gocdagent-data
         persistentVolumeClaim:
-          claimName: gocdagent
+          claimName: gocdagent-node-and-go
       - name: docker-creds
         configMap:
           defaultMode: 420
