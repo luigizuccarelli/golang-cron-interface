@@ -8,7 +8,7 @@ get:
 
 build: 
 	mkdir -p build
-	go build -o build ./...
+	go build -o build/microservice schema.go client-interface.go main.go update.go connector.go validate.go
 
 test:
 	go test -v -coverprofile=tests/results/cover.out validate.go validate_test.go update.go update_test.go schema.go client-interface.go

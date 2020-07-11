@@ -15,7 +15,7 @@ spec:
         args: [
           "--context=/godata/pipelines/agoracxp-cron-interface",
           "--dockerfile=/godata/pipelines/agoracxp-cron-interface/Dockerfile",
-          "--destination=tfld-docker-prd-local.repo.14west.io/agoracxp-cron-interface:1.13.1"
+          "--destination=tfld-docker-prd-local.repo.14west.io/agoracxp-cron-interface:1.14.2"
         ]
         volumeMounts:
         - mountPath: /godata
@@ -25,7 +25,7 @@ spec:
           subPath: config.json
         env:
         - name: DESITINATION
-          value: tfld-docker-prd-local.repo.14west.io/agoracxp-cron-interface:1.13.1
+          value: tfld-docker-prd-local.repo.14west.io/agoracxp-cron-interface:1.14.2
       restartPolicy: Never   
       volumes:
       - name: gocdagent-data
