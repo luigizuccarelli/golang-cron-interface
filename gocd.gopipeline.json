@@ -2,8 +2,8 @@
   "format_version" : 1,
   "label_template": "${COUNT}",
   "enable_pipeline_locking": false,
-  "name": "myportfolio-cronupdate",
-  "group" : "MyPortfolio",
+  "name": "agoracxp-cron-interface",
+  "group" : "AgoraCXP",
   "tracking_tool": null,
   "timer": null,
   "environment_variables": [],
@@ -16,7 +16,7 @@
   "materials": [
     {
       "type": "git",
-      "url": "http://cicd:cicd01@gitea.cicd.svc.cluster.local:3000/cicd/myportfolio-cronupdate.git",
+      "url": "http://cicd:cicd01@gitea.cicd.svc.cluster.local:3000/cicd/agoracxp-cron-interface.git",
       "destination": null,
       "filter": null,
       "name": "scm",

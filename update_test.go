@@ -63,14 +63,14 @@ func NewHttpTestClient(fn RoundTripFunc) *http.Client {
 
 func NewTestClient(data string, code int, con string, logger *simple.Logger) Client {
 
-	// we first load the json payload to simulate a call to middleware
+	// we first load the json payload to simulate a call
 	// for now just ignore failures.
 	httpclient := NewHttpTestClient(func(req *http.Request) *http.Response {
 		return &http.Response{
 			StatusCode: code,
 			// Send response to be tested
 
-			Body: ioutil.NopCloser(bytes.NewBufferString("{\"response\":\"something\"}")),
+			Body: ioutil.NopCloser(bytes.NewBufferString(data)),
 			// Must be set to non-nil value or it panics
 			Header: make(http.Header),
 		}
@@ -80,66 +80,25 @@ func NewTestClient(data string, code int, con string, logger *simple.Logger) Cli
 	return conns
 }
 
-func assertEqual(t *testing.T, a interface{}, b interface{}) {
-	if a != b {
-		t.Fatalf("%s != %s", a, b)
-	}
-}
-
 func TestAll(t *testing.T) {
 
 	var err error
 	log := &simple.Logger{Level: "trace"}
 
-	// create anonymous struct
-	tests := []struct {
-		Name     string
-		Payload  string
-		Handler  string
-		FileName string
-		Want     bool
-		ErrorMsg string
-	}{
-		{
-			"[TEST] UpdateData should pass",
-			"{\"affiliate\": \"SBR-01\"},{\"affiliate\":\"Test\"}",
-			"UpdateData",
-			"tests/payload-example.json",
-			false,
-			"Handler %s returned - got (%v) wanted (%v)",
-		},
-		{
-			"[TEST] UpdateData should fail (forced error - display only)",
-			"{\"affiliate\": \"SBR-01\"},{\"affiliate\":\"Test\"}",
-			"UpdateDataError",
-			"tests/payload-example.json",
-			false,
-			"Handler %s returned - got (%v) wanted (%v)",
-		},
-	}
-
-	for _, tt := range tests {
-		log.Info(fmt.Sprintf("Executing test : %s", tt.Name))
-		switch tt.Handler {
-		case "UpdateData":
-			logger.Debug(fmt.Sprintf("Payload %s", tt.Payload))
-			conn := NewTestClient(tt.FileName, 200, "normal", log)
-			err = UpdateData(conn)
-		case "UpdateDataError":
-			logger.Debug(fmt.Sprintf("Payload %s", tt.Payload))
-			conn := NewTestClient(tt.FileName, 200, "error", log)
-			err = UpdateData(conn)
+	t.Run("UpdateData : should pass", func(t *testing.T) {
+		conn := NewTestClient("{\"name\":\"test\"}", 200, "normal", log)
+		res := UpdateData(conn)
+		if res != nil {
+			t.Errorf(fmt.Sprintf("Handler %s returned with error (%v) wanted (nil)", "UpdateData", err))
 		}
+	})
 
-		if !tt.Want {
-			if err != nil {
-				t.Errorf(fmt.Sprintf(tt.ErrorMsg, tt.Handler, err, nil))
-			}
-		} else {
-			if err == nil {
-				t.Errorf(fmt.Sprintf(tt.ErrorMsg, tt.Handler, "nil", "error"))
-			}
+	t.Run("UpdateData : should fail (force error)", func(t *testing.T) {
+		conn := NewTestClient("test", 500, "error", log)
+		res := UpdateData(conn)
+		if res == nil {
+			t.Errorf(fmt.Sprintf("Handler %s returned with no error wanted (err)", "UpdateData"))
 		}
-		fmt.Println(" ")
-	}
+	})
+
 }

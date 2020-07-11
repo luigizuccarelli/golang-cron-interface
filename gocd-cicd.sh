@@ -3,10 +3,10 @@
 # All parameter fields are required for the script to execute
 
 # declare some variables
-PROJECT="myportfolio-cronupdate"
-jobname="kaniko-myportfolio-cronupdate"
+PROJECT="agoracxp-cron-interface"
+jobname="kaniko-agoracxp-cron-interface"
 deploymentconfig="cronupdate.json"
-namespace="myportfolio"
+namespace="agoracxp"
 
 
 # some variable checks
@@ -58,8 +58,12 @@ then
      result=$(cat output.json | jq '.task.status');
      echo "${fs} ${result}";
    done
+   # get the quality gate status
+   curl -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Authorization: Basic YWRtaW46Yml0bmFtaQ=='  "${SONARQUBE_HOST}/api/qualitygates/project_status?projectKey=${PROJECT}" > result.json;
+
+   result=$(cat result.json | jq '.projectStatus.status');
    # check to see if the job was succesful
-   echo ${result} | grep -o "SUCCESS" && echo "PASSED" && exit 0 || echo "FAILED" && exit 1
+   echo ${result} | grep -o "OK" && echo "PASSED" && exit 0 || echo "FAILED" && exit 1
 fi
 
 if [ "$1" = "build-image" ]

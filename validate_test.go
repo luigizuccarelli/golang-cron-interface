@@ -2,90 +2,57 @@ package main
 
 import (
 	"fmt"
-	"github.com/microlib/simple"
 	"os"
 	"testing"
+
+	"github.com/microlib/simple"
 )
 
 var (
 	logger *simple.Logger
 )
 
+// TestEnvars - entry for validator tests
 func TestEnvars(t *testing.T) {
+	logger := &simple.Logger{Level: "trace"}
 
-	// create anonymous struct
-	tests := []struct {
-		Name     string
-		Payload  string
-		Handler  string
-		FileName string
-		Want     bool
-		ErrorMsg string
-	}{
-		{
-			"Test envars : should fail",
-			"",
-			"TestEnvarsFail",
-			"",
-			true,
-			"Handler %s returned - got (%v) wanted (%v)",
-		},
-		{
-			"Test envars : should pass",
-			"",
-			"TestEnvarsPass",
-			"",
-			false,
-			"Handler %s returned - got (%v) wanted (%v)",
-		},
-	}
-	var err error
-	logger = &simple.Logger{Level: "trace"}
-
-	for _, tt := range tests {
-		fmt.Println(fmt.Sprintf("\nExecuting test : %s", tt.Name))
-		switch tt.Handler {
-		case "TestEnvarsFail":
-			err = nil
-			os.Setenv("SERVER_PORT", "")
-			err = ValidateEnvars(logger)
-		case "TestEnvarsPass":
-			err = nil
-			os.Setenv("LOG_LEVEL", "info")
-			os.Setenv("SERVER_PORT", "9000")
-			os.Setenv("REDIS_HOST", "127.0.0.1")
-			os.Setenv("REDIS_PORT", "6379")
-			os.Setenv("REDIS_PASSWORD", "6379")
-			os.Setenv("MONGODB_HOST", "localhost")
-			os.Setenv("MONGODB_PORT", "27017")
-			os.Setenv("MONGODB_DATABASE", "test")
-			os.Setenv("MONGODB_USER", "mp")
-			os.Setenv("MONGODB_PASSWORD", "mp")
-			os.Setenv("URL", "http://test.com")
-			os.Setenv("TOKEN", "dsafsdfdsf")
-			os.Setenv("VERSION", "1.0.3")
-			os.Setenv("BROKERS", "localhost:9092")
-			os.Setenv("TOPIC", "test")
-			os.Setenv("CONNECTOR", "NA")
-			os.Setenv("PROVIDER_NAME", "NA")
-			os.Setenv("PROVIDER_URL", "http://test.com")
-			os.Setenv("PROVIDER_TOKEN", "dsfgsdfsdf")
-			os.Setenv("ANALYTICS_URL", "http://test.com")
-			os.Setenv("PAYLOAD", "{ test }")
-			os.Setenv("SLEEP", "5")
-			os.Setenv("CRON", "0/5 * * *")
-			err = ValidateEnvars(logger)
+	t.Run("ValidateEnvars : should fail", func(t *testing.T) {
+		os.Setenv("SERVER_PORT", "")
+		err := ValidateEnvars(logger)
+		if err == nil {
+			t.Errorf(fmt.Sprintf("Handler %s returned with no error - got (%v) wanted (%v)", "ValidateEnvars", err, nil))
 		}
+	})
 
-		if !tt.Want {
-			if err != nil {
-				t.Errorf(fmt.Sprintf(tt.ErrorMsg, tt.Handler, err, nil))
-			}
-		} else {
-			if err == nil {
-				t.Errorf(fmt.Sprintf(tt.ErrorMsg, tt.Handler, "nil", "error"))
-			}
+	t.Run("ValidateEnvars : should pass", func(t *testing.T) {
+		os.Setenv("LOG_LEVEL", "info")
+		os.Setenv("ADV_URL", "/test")
+		os.Setenv("SERVER_PORT", "9000")
+		os.Setenv("REDIS_HOST", "127.0.0.1")
+		os.Setenv("REDIS_PORT", "6379")
+		os.Setenv("REDIS_PASSWORD", "6379")
+		os.Setenv("MONGODB_HOST", "localhost")
+		os.Setenv("MONGODB_PORT", "27017")
+		os.Setenv("MONGODB_DATABASE", "test")
+		os.Setenv("MONGODB_USER", "mp")
+		os.Setenv("MONGODB_PASSWORD", "mp")
+		os.Setenv("URL", "http://test.com")
+		os.Setenv("TOKEN", "dsafsdfdsf")
+		os.Setenv("VERSION", "1.0.3")
+		os.Setenv("KAFKA_BROKERS", "localhost:9092")
+		os.Setenv("TOPIC", "test")
+		os.Setenv("CONNECTOR", "NA")
+		os.Setenv("PROVIDER_NAME", "NA")
+		os.Setenv("PROVIDER_URL", "http://test.com")
+		os.Setenv("PROVIDER_TOKEN", "dsfgsdfsdf")
+		os.Setenv("ANALYTICS_URL", "http://test.com")
+		os.Setenv("NAME", "test")
+		os.Setenv("CRON", "0 0/9 * * *")
+		os.Setenv("PAYLOAD", "test")
+		os.Setenv("SLEEP", "3600")
+		err := ValidateEnvars(logger)
+		if err != nil {
+			t.Errorf(fmt.Sprintf("Handler %s returned with error - got (%v) wanted (%v)", "ValidateEnvars", err, nil))
 		}
-		fmt.Println("")
-	}
+	})
 }
