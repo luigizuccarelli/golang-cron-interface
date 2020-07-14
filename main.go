@@ -2,13 +2,14 @@ package main
 
 import (
 	"fmt"
-	"github.com/microlib/simple"
-	"gopkg.in/robfig/cron.v2"
 	"os"
 	"os/signal"
 	"strconv"
 	"syscall"
 	"time"
+
+	"github.com/microlib/simple"
+	"github.com/robfig/cron"
 )
 
 var (

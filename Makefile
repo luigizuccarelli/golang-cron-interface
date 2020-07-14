@@ -3,7 +3,7 @@
 all: clean test build
 
 get:
-	go get gopkg.in/robfig/cron.v2
+	go get github.com/robfig/cron 
 	go get github.com/microlib/simple
 
 build: 
