@@ -3,10 +3,10 @@
 # All parameter fields are required for the script to execute
 
 # declare some variables
-PROJECT="agoracxp-cron-interface"
-jobname="kaniko-agoracxp-cron-interface"
+PROJECT="trackmate-cron-interface"
+jobname="kaniko-trackmate-cron-interface"
 deploymentconfig="cronupdate.json"
-namespace="agoracxp"
+namespace="trackmate"
 
 
 # some variable checks
@@ -46,7 +46,7 @@ then
    touch output.json
    fs=$(stat --printf='%s\n' output.json)
    result="\"PENDING\""
-   ${SONARQUBE_SCANNER_PATH}bin/sonar-scanner -Dsonar.projectKey=${PROJECT} -Dsonar.sources=. -Dsonar.host.url=${SONARQUBE_HOST} -Dsonar.login=${SONARQUBE_USER} -Dsonar.password=${SONARQUBE_PASSWORD} -Dsonar.go.coverage.reportPaths=tests/results/cover.out -Dsonar.exclusions=vendor/**,*_test.go,main.go,connector.go,schema.go,swaggerui/**,tests/**,*.json,*.txt,*.yml,*.xml,*.sh,Dockerfile -Dsonar.issuesReport.json.enable=true -Dsonar.report.export.path=sonar-report.json -Dsonar.issuesReport.console.enable=true | tee response.txt
+   ${SONARQUBE_SCANNER_PATH}bin/sonar-scanner -Dsonar.projectKey=${PROJECT} -Dsonar.sources=. -Dsonar.host.url=${SONARQUBE_HOST} -Dsonar.login=${SONARQUBE_USER} -Dsonar.password=${SONARQUBE_PASSWORD} -Dsonar.go.coverage.reportPaths=tests/results/cover.out -Dsonar.exclusions=cmd/**,pkg/connectors/**,pkg/schema/**,pkg/handlers/*_test.go,pkg/validator/*_test.go,tests/**,*.json,*.txt,*.yml,*.xml,*.sh,Dockerfile,Makefile -Dsonar.issuesReport.json.enable=true -Dsonar.report.export.path=sonar-report.json -Dsonar.issuesReport.console.enable=true | tee response.txt
    # response text includes the url to view the json payload of the sonar scanner results
    url=$(cat response.txt | grep -o "${SONARQUBE_HOST}/api/ce/task?id=[-_A-Za-z0-9]*")
    # loop until we have a valid payload
@@ -58,13 +58,15 @@ then
      result=$(cat output.json | jq '.task.status');
      echo "${fs} ${result}";
    done
-   # get the quality gate status
+      # get the quality gate status
    curl -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Authorization: Basic YWRtaW46Yml0bmFtaQ=='  "${SONARQUBE_HOST}/api/qualitygates/project_status?projectKey=${PROJECT}" > result.json;
 
    result=$(cat result.json | jq '.projectStatus.status');
    # check to see if the job was succesful
    echo ${result} | grep -o "OK" && echo "PASSED" && exit 0 || echo "FAILED" && exit 1
+
 fi
+
 
 if [ "$1" = "build-image" ]
 then

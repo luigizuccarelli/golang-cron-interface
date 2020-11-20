@@ -1,3 +1,5 @@
+// +build real
+
 package main
 
 import (
@@ -8,6 +10,9 @@ import (
 	"syscall"
 	"time"
 
+	"gitea-cicd.apps.aws2-dev.ocp.14west.io/cicd/trackmate-cron-interface/pkg/connectors"
+	"gitea-cicd.apps.aws2-dev.ocp.14west.io/cicd/trackmate-cron-interface/pkg/handlers"
+	"gitea-cicd.apps.aws2-dev.ocp.14west.io/cicd/trackmate-cron-interface/pkg/validator"
 	"github.com/microlib/simple"
 	"github.com/robfig/cron"
 )
@@ -20,17 +25,17 @@ func main() {
 
 	logger = &simple.Logger{Level: os.Getenv("LOG_LEVEL")}
 
-	err := ValidateEnvars(logger)
+	err := validator.ValidateEnvars(logger)
 	if err != nil {
 		os.Exit(1)
 	}
 
-	conn := NewClientConnection(logger)
+	conn := connectors.NewClientConnection(logger)
 
 	cr := cron.New()
 	cr.AddFunc(os.Getenv("CRON"),
 		func() {
-			UpdateData(conn)
+			handlers.ZipAndTransfer(conn)
 		})
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)

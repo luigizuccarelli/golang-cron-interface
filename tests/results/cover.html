@@ -3,6 +3,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>handlers: Go Coverage Report</title>
 		<style>
 			body {
 				background: black;
@@ -54,9 +55,9 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">/home/lzuccarelli/Projects/agoracxp/agoracxp-cron-interface/update.go (85.7%)</option>
+				<option value="file0">gitea-cicd.apps.aws2-dev.ocp.14west.io/cicd/trackmate-cron-interface/pkg/handlers/zip-transfer.go (84.4%)</option>
 				
-				<option value="file1">/home/lzuccarelli/Projects/agoracxp/agoracxp-cron-interface/validate.go (100.0%)</option>
+				<option value="file1">gitea-cicd.apps.aws2-dev.ocp.14west.io/cicd/trackmate-cron-interface/pkg/validator/validate.go (100.0%)</option>
 				
 				</select>
 			</div>
@@ -70,38 +71,77 @@
 		</div>
 		<div id="content">
 		
-		<pre class="file" id="file0" style="display: none">package main
+		<pre class="file" id="file0" style="display: none">package handlers
 
 import (
-        "fmt"
+        "compress/gzip"
         "io/ioutil"
-        "net/http"
         "os"
+        "strconv"
+        "strings"
+        "time"
+
+        "gitea-cicd.apps.aws2-dev.ocp.14west.io/cicd/trackmate-cron-interface/pkg/connectors"
+        "github.com/aws/aws-sdk-go/aws"
+        "github.com/aws/aws-sdk-go/service/s3"
 )
 
-func UpdateData(c Client) error <span class="cov8" title="1">{
+func ZipAndTransfer(c connectors.Client) error <span class="cov8" title="1">{
 
-        req, _ := http.NewRequest("POST", os.Getenv("URL"), nil)
-        req.Header.Set("X-Api-Key", os.Getenv("APIKEY"))
-        req.Header.Set("Content-Type", "application/json")
-        resp, err := c.Do(req)
+        year, month, day := time.Now().Date()
+        m := int(month)
+        prevDay := day - 1
+
+        if os.Getenv("TESTING") != "" &amp;&amp; os.Getenv("TESTING") == "true" </span><span class="cov8" title="1">{
+                year = 2020
+                month = 11
+                prevDay = 11
+        }</span>
+
+        <span class="cov8" title="1">d, err := ioutil.ReadFile(os.Getenv("BASE_DIR") + "/analytics-" + strconv.Itoa(year) + "-" + strconv.Itoa(m) + "-" + strconv.Itoa(prevDay) + ".json")
+        c.Debug("Function ZipAndTransfer key %s ", "analytics-"+strconv.Itoa(year)+"-"+strconv.Itoa(m)+"-"+strconv.Itoa(prevDay))
         if err != nil </span><span class="cov8" title="1">{
-                c.Error(fmt.Sprintf("Function UpdateData http request %v", err))
+                c.Error("Function ZipAndTransfer %v", err)
                 return err
         }</span>
 
-        <span class="cov8" title="1">defer resp.Body.Close()
-        body, e := ioutil.ReadAll(resp.Body)
-        if e != nil </span><span class="cov0" title="0">{
-                c.Error(fmt.Sprintf("Function UpdateData %v", e))
+        <span class="cov8" title="1">f, _ := os.Create(os.Getenv("BASE_DIR") + "/analytics-" + strconv.Itoa(year) + "-" + strconv.Itoa(m) + "-" + strconv.Itoa(prevDay) + ".gz")
+        w := gzip.NewWriter(f)
+        defer w.Close()
+        _, err = w.Write(d)
+        if err != nil </span><span class="cov0" title="0">{
                 return err
         }</span>
-        <span class="cov8" title="1">c.Debug(fmt.Sprintf("Function UpdateData response from server %s", string(body)))
-        return nil</span>
+
+        <span class="cov8" title="1">input := &amp;s3.PutObjectInput{
+                Body:   aws.ReadSeekCloser(strings.NewReader(os.Getenv("BASE_DIR") + "/analytics-" + strconv.Itoa(year) + "-" + strconv.Itoa(m) + "-" + strconv.Itoa(prevDay) + ".gz")),
+                Bucket: aws.String(os.Getenv("AWS_BUCKET")),
+                Key:    aws.String(strconv.Itoa(year) + "-" + strconv.Itoa(m) + "-" + strconv.Itoa(prevDay)),
+        }
+
+        _, e := c.PutObject(input)
+        if e != nil </span><span class="cov8" title="1">{
+                c.Error("Function ZipAndTransfer %v", e)
+                return e
+        }</span>
+
+        <span class="cov8" title="1">e = os.Remove(os.Getenv("BASE_DIR") + "/analytics-" + strconv.Itoa(year) + "-" + strconv.Itoa(m) + "-" + strconv.Itoa(prevDay) + ".json")
+        if e != nil </span><span class="cov0" title="0">{
+                c.Error("Function ZipAndTransfer %v", e)
+                return e
+        }</span>
+
+        <span class="cov8" title="1">e = os.Remove(os.Getenv("BASE_DIR") + "/analytics-" + strconv.Itoa(year) + "-" + strconv.Itoa(m) + "-" + strconv.Itoa(prevDay) + ".gz")
+        if e != nil </span><span class="cov0" title="0">{
+                c.Error("Function ZipAndTransfer %v", e)
+                return e
+        }</span>
+
+        <span class="cov8" title="1">return nil</span>
 }
 </pre>
 		
-		<pre class="file" id="file1" style="display: none">package main
+		<pre class="file" id="file1" style="display: none">package validator
 
 import (
         "errors"
@@ -134,10 +174,16 @@ func checkEnvar(item string, logger *simple.Logger) error <span class="cov8" tit
 func ValidateEnvars(logger *simple.Logger) error <span class="cov8" title="1">{
         items := []string{
                 "LOG_LEVEL,false",
-                "URL,true",
                 "SLEEP,true",
                 "CRON,true",
-                "PAYLOAD,true",
+                "AWS_REGION,true",
+                "AWS_BUCKET,true",
+                "AWS_ACCOUNT,true",
+                "AWS_ACCESS_KEY_ID,true",
+                "AWS_SECRET_ACCESS_KEY,true",
+                "AWS_USER,true",
+                "AWS_ACCOUNT,true",
+                "BASE_DIR,true",
         }
         for x, _ := range items </span><span class="cov8" title="1">{
                 if err := checkEnvar(items[x], logger); err != nil </span><span class="cov8" title="1">{

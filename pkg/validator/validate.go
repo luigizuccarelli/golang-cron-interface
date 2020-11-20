@@ -1,4 +1,4 @@
-package main
+package validator
 
 import (
 	"errors"
@@ -31,10 +31,16 @@ func checkEnvar(item string, logger *simple.Logger) error {
 func ValidateEnvars(logger *simple.Logger) error {
 	items := []string{
 		"LOG_LEVEL,false",
-		"URL,true",
 		"SLEEP,true",
 		"CRON,true",
-		"PAYLOAD,true",
+		"AWS_REGION,true",
+		"AWS_BUCKET,true",
+		"AWS_ACCOUNT,true",
+		"AWS_ACCESS_KEY_ID,true",
+		"AWS_SECRET_ACCESS_KEY,true",
+		"AWS_USER,true",
+		"AWS_ACCOUNT,true",
+		"BASE_DIR,true",
 	}
 	for x, _ := range items {
 		if err := checkEnvar(items[x], logger); err != nil {

@@ -1,4 +1,4 @@
-package main
+package schema
 
 // Response schema
 type Response struct {

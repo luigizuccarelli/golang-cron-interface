@@ -2,11 +2,9 @@ FROM registry.access.redhat.com/ubi8/ubi-minimal:latest
 
 LABEL maintainer="lzuccarelli@tfd.ie"
 
-ENV GOPATH /go
-ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
+RUN mkdir -p /go/src /go/bin /data/backup && chmod -R 0755 /go && chmod -R 0755 /data && chmod -R 0755 /data/backup
 COPY build/microservice uid_entrypoint.sh /go/ 
-RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 0755 "$GOPATH"
-WORKDIR $GOPATH
+WORKDIR /go
 
 USER 1001
 

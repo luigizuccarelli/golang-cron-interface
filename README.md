@@ -1,2 +1,2 @@
-# AgoraCXP golang-microservice-cronupdate job
-A simple microservice that calls a url to update specific data. This is a generic service
+# Trackmate golang-microservice-cron job
+A simple microservice that creates gz file from raw event data and stores it in a s3 bucket

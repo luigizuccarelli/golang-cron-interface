@@ -2,8 +2,8 @@
   "format_version" : 1,
   "label_template": "${COUNT}",
   "enable_pipeline_locking": false,
-  "name": "agoracxp-cron-interface",
-  "group" : "AgoraCXP",
+  "name": "trackmate-cron-interface",
+  "group" : "Trackmate",
   "tracking_tool": null,
   "timer": null,
   "environment_variables": [],
@@ -16,7 +16,7 @@
   "materials": [
     {
       "type": "git",
-      "url": "http://cicd:cicd01@gitea.cicd.svc.cluster.local:3000/cicd/agoracxp-cron-interface.git",
+      "url": "http://cicd:cicd01@gitea.cicd.svc.cluster.local:3000/cicd/trackmate-cron-interface.git",
       "destination": null,
       "filter": null,
       "name": "scm",
@@ -87,22 +87,6 @@
               "command": "make",
               "arguments": [
                 "clean"
-              ],
-              "working_directory": null
-            },
-            {
-              "type": "exec",
-              "command": "echo",
-              "arguments": [
-                "Executing golang go get packages"
-              ],
-              "working_directory": null
-            },
-            {
-              "type": "exec",
-              "command": "make",
-              "arguments": [
-                "get"
               ],
               "working_directory": null
             },

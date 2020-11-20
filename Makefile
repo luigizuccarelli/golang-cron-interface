@@ -2,16 +2,13 @@
 
 all: clean test build
 
-get:
-	go get github.com/robfig/cron 
-	go get github.com/microlib/simple
 
 build: 
 	mkdir -p build
-	go build -o build/microservice schema.go client-interface.go main.go update.go connector.go validate.go
+	go build -o build -tags real ./...
 
 test:
-	go test -v -coverprofile=tests/results/cover.out validate.go validate_test.go update.go update_test.go schema.go client-interface.go
+	go test -v -coverprofile=tests/results/cover.out -tags fake ./...
 
 cover:
 	go tool cover -html=tests/results/cover.out -o tests/results/cover.html
@@ -21,7 +18,7 @@ clean:
 	go clean ./...
 
 container:
-	podman build -t  tfld-docker-prd-local.repo.14west.io/agoracxp-cron-interface:1.14.2 .
+	podman build -t  quay.io/14west/trackmate-cron-interface:1.14.2 .
 
 push:
-	podman push tfld-docker-prd-local.repo.14west.io/agoracxp-cron-interface:1.14.2 
+	podman push quay.io/14west/trackmate-cron-interface:1.14.2 

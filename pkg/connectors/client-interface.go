@@ -1,7 +1,7 @@
-package main
+package connectors
 
 import (
-	"net/http"
+	"github.com/aws/aws-sdk-go/service/s3"
 )
 
 type Client interface {
@@ -9,5 +9,5 @@ type Client interface {
 	Info(string, ...interface{})
 	Debug(string, ...interface{})
 	Trace(string, ...interface{})
-	Do(req *http.Request) (*http.Response, error)
+	PutObject(*s3.PutObjectInput) (*s3.PutObjectOutput, error)
 }
