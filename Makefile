@@ -18,7 +18,7 @@ clean:
 	go clean ./...
 
 container:
-	podman build -t  quay.io/14west/trackmate-cron-interface:1.14.2 .
+	podman build -t  quay.io/14west/trackmate-cron-interface:1.15.6 .
 
 push:
-	podman push quay.io/14west/trackmate-cron-interface:1.14.2 
+	podman push quay.io/14west/trackmate-cron-interface:1.15.6 

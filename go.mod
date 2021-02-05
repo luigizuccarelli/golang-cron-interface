@@ -1,9 +1,9 @@
-module gitea-cicd.apps.aws2-dev.ocp.14west.io/cicd/trackmate-cron-interface
+module gitea-devops-shared-threefld-cicd.apps.c4.us-east-1.dev.aws.ocp.14west.io/cicd/trackmate-cron-interface
 
 go 1.15
 
 require (
-	github.com/aws/aws-sdk-go v1.35.31
-	github.com/microlib/simple v0.0.0-20201104084214-c94624b8d53c
+	github.com/aws/aws-sdk-go v1.37.5
+	github.com/microlib/simple v1.0.1
 	github.com/robfig/cron v1.2.0
 )

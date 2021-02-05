@@ -4,6 +4,7 @@ LABEL maintainer="lzuccarelli@tfd.ie"
 
 RUN mkdir -p /go/src /go/bin /data/backup && chmod -R 0755 /go && chmod -R 0755 /data && chmod -R 0755 /data/backup
 COPY build/microservice uid_entrypoint.sh /go/ 
+RUN chown 1001:root /go
 WORKDIR /go
 
 USER 1001

@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"gitea-cicd.apps.aws2-dev.ocp.14west.io/cicd/trackmate-cron-interface/pkg/connectors"
+	"gitea-devops-shared-threefld-cicd.apps.c4.us-east-1.dev.aws.ocp.14west.io/cicd/trackmate-cron-interface/pkg/connectors"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3"
 )
@@ -21,7 +21,7 @@ func ZipAndTransfer(c connectors.Client) error {
 
 	if os.Getenv("TESTING") != "" && os.Getenv("TESTING") == "true" {
 		year = 2020
-		month = 11
+		m = 11
 		prevDay = 11
 	}
 
