@@ -3,3 +3,4 @@ A simple microservice that creates gz file from raw event data and stores it in 
 
 ## Update for openshift pipelines
 - removed all references to GOCD
+- update memory limits in osp task
