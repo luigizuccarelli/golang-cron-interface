@@ -10,11 +10,11 @@ import (
 	"syscall"
 	"time"
 
-	"gitea-devops-shared-threefld-cicd.apps.c4.us-east-1.dev.aws.ocp.14west.io/cicd/trackmate-cron-interface/pkg/connectors"
-	"gitea-devops-shared-threefld-cicd.apps.c4.us-east-1.dev.aws.ocp.14west.io/cicd/trackmate-cron-interface/pkg/handlers"
-	"gitea-devops-shared-threefld-cicd.apps.c4.us-east-1.dev.aws.ocp.14west.io/cicd/trackmate-cron-interface/pkg/validator"
 	"github.com/microlib/simple"
 	"github.com/robfig/cron"
+	"lmzsoftware.com/lzuccarelli/golang-cron-interface/pkg/connectors"
+	"lmzsoftware.com/lzuccarelli/golang-cron-interface/pkg/handlers"
+	"lmzsoftware.com/lzuccarelli/golang-cron-interface/pkg/validator"
 )
 
 var (
