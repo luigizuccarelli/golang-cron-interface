@@ -9,9 +9,9 @@ import (
 	"os"
 	"testing"
 
-	"gitea-devops-shared-threefld-cicd.apps.c4.us-east-1.dev.aws.ocp.14west.io/cicd/trackmate-cron-interface/pkg/connectors"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/microlib/simple"
+	"lmzsoftware.com/lzuccarelli/golang-cron-interface/pkg/connectors"
 )
 
 type errReader int
@@ -81,8 +81,8 @@ func TestAll(t *testing.T) {
 		os.Setenv("BASE_DIR", "../../tests")
 		os.Setenv("TESTING", "true")
 		os.Setenv("AWS_REGION", "us-east-1")
-		os.Setenv("AWS_BUCKET", "544-trackmate-dev")
-		os.Setenv("USER", "544-trackmate-dev")
+		os.Setenv("AWS_BUCKET", "544-golang-dev")
+		os.Setenv("USER", "544-golang-dev")
 		os.Setenv("AWS_ACCOUNT", "544841062556")
 		conn := NewTestClient("error", log)
 		res := ZipAndTransfer(conn)
@@ -95,9 +95,9 @@ func TestAll(t *testing.T) {
 		os.Setenv("BASE_DIR", "../../tests")
 		os.Setenv("TESTING", "true")
 		os.Setenv("AWS_REGION", "us-east-1")
-		os.Setenv("AWS_BUCKET", "544-trackmate-dev")
+		os.Setenv("AWS_BUCKET", "544-golang-dev")
 		os.Setenv("AWS_ACCOUNT", "544841062556")
-		os.Setenv("USER", "544-trackmate-dev")
+		os.Setenv("USER", "544-golang-dev")
 		conn := NewTestClient("normal", log)
 		res := ZipAndTransfer(conn)
 		if res != nil {
@@ -109,8 +109,8 @@ func TestAll(t *testing.T) {
 		os.Setenv("BASE_DIR", "../../tests")
 		os.Setenv("TESTING", "true")
 		os.Setenv("AWS_REGION", "us-east-1")
-		os.Setenv("AWS_BUCKET", "544-trackmate-dev")
-		os.Setenv("USER", "544-trackmate-dev")
+		os.Setenv("AWS_BUCKET", "544-golang-dev")
+		os.Setenv("USER", "544-golang-dev")
 		os.Setenv("AWS_ACCOUNT", "544841062556")
 		conn := NewTestClient("error", log)
 		res := ZipAndTransfer(conn)
